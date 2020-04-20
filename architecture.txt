@@ -1,0 +1,29 @@
+Game Plan:
+
+Each player has:
+- a location attribute in the form of a coordinate (x,y)
+- whether it has the ball in the form of a boolean
+- every second, each player decides how s/he should act
+
+Player actions include
+- intercept
+- run
+   - expressed as a vector, with the magnitude being the speed and the direction
+     being the direction
+- pass
+- shoot
+
+The ball has:
+- a location attribute in the form of a coordinate (x,y)
+- the speed and direction it's going in the form of a vector
+
+Training Plan:
+- going near the ball = reward
+- intercepting the ball = bigger reward
+- having the ball taken from you = punishment
+
+Have a transition function that takes an action, a state (everything happening at the moment; a snapshot in time), a specific player this is intended for, and returns a new action for this specific player
+
+We plan on doing policy iteration to train the agents. Not sure how though.
+
+We should have a while loop that keeps calling the transition function, which requires a reward function.
