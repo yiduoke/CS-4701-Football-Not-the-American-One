@@ -9,25 +9,12 @@ Original file is located at
 
 # Commented out IPython magic to ensure Python compatibility.
 # %tensorflow_version 1.x
-!pip install stable-baselines[mpi]==2.10.0
-
-! git clone https://github.com/yc2454/gym-futbol.git
-
-# Commented out IPython magic to ensure Python compatibility.
-# %cd /content/gym-futbol/
-
-! git checkout yc2454
-
-! git pull
-
-pip install -e .
 
 import gym
 import numpy as np
 from stable_baselines import PPO2
 from stable_baselines.common.policies import MlpPolicy
 from stable_baselines.common.evaluation import evaluate_policy
-
 import gym_futbol
 
 # Commented out IPython magic to ensure Python compatibility.
