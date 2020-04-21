@@ -16,20 +16,14 @@ xdata, ydata = [], []
 field, = plt.plot([], [], 'ro')
 
 players = [] # holds players' coordinates; only 2 players right now
-ball_coors = [500,500] # doesn't matter, but has to be length 2
+ball_coors = [] # doesn't matter, but has to be length 2
 num_players = 2
 environment = training.env
+#global observation
 observation = environment.reset()
 model = training.model
+#global action
 action, _states = model.predict(observation)
-
-def init():
-    # dimensions of the football field
-    ax.set_xlim(0, 1050)
-    ax.set_ylim(0, 680)
-    for i in range(num_players):
-        players.append([random.random() * 1050, random.random() * 680])
-    return field,
     
     
 # Return x in (x,y)
@@ -42,26 +36,48 @@ def y_coor(coors):
 
 # take one step in the game
 def players_step():
+    global observation
+    global action
+    
     observation2, reward, done, info = environment.step(action)
+    
+    
     observation = observation2
-    print(observation)
     for i in range(num_players):
-        players[i][0] = observation[0,i,0]
-        players[i][1] = observation[0,i,1]
-    ball_coors[0] = observation[0,-1,0]
-    ball_coors[0] = observation[0,-1,1]
+        players[i] = [observation[0,i,0], observation[0,i,1]]
+    ball_coors = [observation[0,-1,0], observation[0,-1,1]]
+    action2, _states = model.predict(observation)
+    
+    action = action2
+    
+
+def init():
+    print("startinggggggg\n\n\n\n")
+    # dimensions of the football field
+    ax.set_xlim(0, 1050)
+    ax.set_ylim(0, 680)
+    
+    for i in range(num_players):
+        players.append([200,200])
+        
+    ball_coors.append(500)
+    ball_coors.append(500)
+    return field,
 
 def animate(i):
     """perform animation step"""
     players_step()
-    time.sleep(0.1) # wait for one second
     xdata = [] # need these wipes so we don't get 2938724 balls on the screen
     ydata = []
     xdata = list(map(x_coor, players))
     ydata = list(map(y_coor, players))
+    
     xdata.append(ball_coors[0])
     ydata.append(ball_coors[1])
-#    field.set_data(map(x_coor, players), map(y_coor, players)) # map (higher order function)
+    
+#    plt.plot(xdata[:-1], ydata[:-1], 'ro') # players are red
+#    plt.plot(xdata[-1], ydata[-1], 'go') # ball is green
+    time.sleep(0.05)
     field.set_data(xdata, ydata)
     return field,
         
@@ -76,5 +92,4 @@ ani = animation.FuncAnimation(fig, animate, frames=600,
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
 #ani.save('particle_box.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
-
 plt.show()
