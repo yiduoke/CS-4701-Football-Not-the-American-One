@@ -15,7 +15,8 @@ fig, ax = plt.subplots()
 xdata, ydata = [], []
 field, = plt.plot([], [], 'ro')
 
-players = [] # holds players' coordinates; only 2 right now
+players = [] # holds players' coordinates; only 2 players right now
+ball_coors = [500,500] # doesn't matter, but has to be length 2
 num_players = 2
 environment = training.env
 observation = environment.reset()
@@ -47,13 +48,19 @@ def players_step():
     for i in range(num_players):
         players[i][0] = observation[0,i,0]
         players[i][1] = observation[0,i,1]
+    ball_coors[0] = observation[0,-1,0]
+    ball_coors[0] = observation[0,-1,1]
 
 def animate(i):
     """perform animation step"""
     players_step()
     time.sleep(0.1) # wait for one second
+    xdata = [] # need these wipes so we don't get 2938724 balls on the screen
+    ydata = []
     xdata = list(map(x_coor, players))
     ydata = list(map(y_coor, players))
+    xdata.append(ball_coors[0])
+    ydata.append(ball_coors[1])
 #    field.set_data(map(x_coor, players), map(y_coor, players)) # map (higher order function)
     field.set_data(xdata, ydata)
     return field,
