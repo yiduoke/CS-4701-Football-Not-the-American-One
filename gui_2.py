@@ -1,5 +1,7 @@
 import gym
 import gym_futbol
+import baseline_implementation as training
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
@@ -7,18 +9,25 @@ import matplotlib.animation as animation
 import random
 import time
 
+###### run this file AFTER training
 
 fig, ax = plt.subplots()
 xdata, ydata = [], []
 field, = plt.plot([], [], 'ro')
 
-players = [] # holds players' coordinates
+players = [] # holds players' coordinates; only 2 right now
+num_players = 2
+environment = training.env
+observation = environment.reset()
+model = training.model
+action, _states = model.predict(observation)
 
 def init():
-    ax.set_xlim(0, 1000)
-    ax.set_ylim(0, 1000)
-    for i in range(10):
-        players.append([random.random() * 1000, random.random() * 1000])
+    # dimensions of the football field
+    ax.set_xlim(0, 1050)
+    ax.set_ylim(0, 680)
+    for i in range(num_players):
+        players.append([random.random() * 1050, random.random() * 680])
     return field,
     
     
@@ -30,20 +39,19 @@ def x_coor(coors):
 def y_coor(coors):
     return coors[1]
 
+# take one step in the game
 def players_step():
-    for player in players:
-        player[0] += 100
-        player[1] -= 50
-        
-        if player[0] > 1000:
-            player[0] = random.random() * 1000
-        if player[1] > 1000:
-            player[1] = random.random() * 1000
+    observation2, reward, done, info = environment.step(action)
+    observation = observation2
+    print(observation)
+    for i in range(num_players):
+        players[i][0] = observation[0,i,0]
+        players[i][1] = observation[0,i,1]
 
 def animate(i):
     """perform animation step"""
     players_step()
-    time.sleep(5)
+    time.sleep(0.1) # wait for one second
     xdata = list(map(x_coor, players))
     ydata = list(map(y_coor, players))
 #    field.set_data(map(x_coor, players), map(y_coor, players)) # map (higher order function)
