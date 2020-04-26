@@ -12,16 +12,20 @@ Original file is located at
 
 import gym
 import numpy as np
+import matplotlib.pyplot as plt
 from stable_baselines import PPO2
 from stable_baselines.common.policies import MlpPolicy
 from stable_baselines.common.evaluation import evaluate_policy
 import gym_futbol
+import random
+from IPython import display
 
 # Commented out IPython magic to ensure Python compatibility.
 # %cd /content/gym-futbol/gym_futbol/envs
 
 env = gym.make('Futbol-v0')
 
+global model
 model = PPO2(MlpPolicy, env, verbose=1)
 
 model.learn(total_timesteps=10000)
@@ -62,3 +66,44 @@ obs
 
 reward
 
+FIELD_WID = 105
+FIELD_LEN = 68
+
+####### animation
+def colab_render_dummy(environment, episodes = 1):
+    observation = env.reset()
+
+    for i in range(episodes):
+
+        episode_rewards=[]
+
+        done = False
+        observation = env.reset()
+        while not done:
+            action, _states = model.predict(observation)
+            observation, reward, done, info = environment.step(action)
+            plt.clf()
+
+            plt.xlim(0, FIELD_WID)
+            plt.ylim(0, FIELD_LEN)
+
+            # ai
+            ai_x, ai_y, _, _, _ = observation[0,0]
+            plt.plot(ai_x,ai_y, color = 'red', marker='o', markersize=12, label='ai')
+
+            # opp
+            opp_x, opp_y, _, _, _ = observation[0,1]
+            plt.plot(opp_x, opp_y, color = 'blue', marker='o', markersize=12, label='opp')
+
+            # ball
+            ball_x, ball_y, _, _, _ = observation[0,2]
+            plt.plot(ball_x, ball_y, color = 'green', marker='o', markersize=8, label='ball')
+
+            plt.legend()
+#            plt.show()
+            display.display(plt.gcf())
+            display.clear_output(wait=True)
+
+    return episode_rewards
+
+colab_render_dummy(env)

@@ -54,14 +54,14 @@ def players_step():
 def init():
     print("startinggggggg\n\n\n\n")
     # dimensions of the football field
-    ax.set_xlim(0, 1050)
-    ax.set_ylim(0, 680)
+    ax.set_xlim(0, 1000)
+    ax.set_ylim(0, 600)
     
     for i in range(num_players):
-        players.append([200,200])
+        players.append([observation[0,i,0], observation[0,i,1]])
         
-    ball_coors.append(500)
-    ball_coors.append(500)
+    ball_coors.append(observation[0,-1,0])
+    ball_coors.append(observation[0,-1,1])
     return field,
 
 def animate(i):
@@ -74,6 +74,8 @@ def animate(i):
     
     xdata.append(ball_coors[0])
     ydata.append(ball_coors[1])
+    print(xdata)
+    print(ydata)
     
 #    plt.plot(xdata[:-1], ydata[:-1], 'ro') # players are red
 #    plt.plot(xdata[-1], ydata[-1], 'go') # ball is green
