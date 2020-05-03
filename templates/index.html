@@ -5,10 +5,14 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function(){
-            $('form').submit(function(event){
-                ws.send($('#data').val())
-                return false;
-            });
+//            $('form').submit(function(event){
+ //               ws.send($('#data').val())
+//                return false;
+//            });
+              setInterval(function(){
+                  ws.send("meow!")
+                  return false;
+              }, 3000);
             if ("WebSocket" in window) {
                 ws = new WebSocket("ws://" + document.domain + ":5000/api");
                 ws.onmessage = function (msg) {
@@ -18,12 +22,11 @@
                 alert("WebSocket not supported");
             }
         });
-        
-        setInterval(function() {
-            //call $.ajax here
-        }, 5000); //5 seconds
-        
-        
+<!--        -->
+<!--        setInterval(function() {-->
+<!--            //call $.ajax here-->
+<!--        }, 5000); //5 seconds-->
+<!--        -->
     </script>
 </head>
 <body>
