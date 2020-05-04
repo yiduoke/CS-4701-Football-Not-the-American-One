@@ -112,17 +112,60 @@ field.append("circle")
      .attr("r", 2.5)
      .attr("fill", "white")
 
+// initializing the players so I can modify their coordinates later and not just tack on more and more circles
+
+//field.append("circle")
+//.attr("cx", 200)
+//.attr("cy", 200)
+//.attr("r", 10)
+//.attr("fill", "red")
+//.attr("stroke", "steelblue")
+//.attr("stroke-width", 3)
+
+var player_circles;
+
+function initialize_players(){
+    var num_players = 4
+    players_data_dictionaries = [];
+    for (var i = 0; i < num_players; i++){
+//        var dictionary = {"x_axis": 200 + 10 * i,
+//                          "y_axis": 300 + 10 * i,
+//                          "radius": 10,
+//                          "fill": "red",
+//                          "stroke": "steelblue",
+//                          "stroke-width": 3
+        
+        field.append("circle")
+        .attr("cx", 200 + 10 * i)
+        .attr("cy", 300 + 10 * i)
+        .attr("r", 10)
+        .attr("fill", "red")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 3)
+        .attr("id", "player")
+
+        };
+}
+
 //drawing the players
 function draw_players(players){
-    players.forEach(d => {
-        field.append("circle")
-             .attr("cx", d['x'])
-             .attr("cy", d['y'])
-             .attr("r", 10)
-             .attr("fill", "red")
-             .attr("stroke", "steelblue")
-             .attr("stroke-width", 3)
-        });
+    var player_circles = d3.selectAll("#player");
+    x_coors = [];
+    y_coors = [];
+
+    for(var i = 0; i < players.length; i += 2) {
+        x_coors.push(players[i]);
+    }
+
+    for(var i = 1; i < players.length; i += 2) {
+        y_coors.push(players[i]);
+    }
+    
+    player_circles.data(x_coors);
+    player_circles.attr("cx", function(d){ return d; });
+    
+    player_circles.data(y_coors);
+    player_circles.attr("cy", function(d){ return d; });
 }
 
 function draw_ball(ball){
@@ -143,20 +186,20 @@ $(document).ready(function(){
  //               ws.send($('#data').val())
 //                return false;
 //            });
+    initialize_players();
     setInterval(function(){
       ws.send("meow!")
       return false;
-    }, 1000);
+    }, 500);
     if ("WebSocket" in window) {
         ws = new WebSocket("ws://" + document.domain + ":5000/api");
         ws.onmessage = function (msg) {
             var all_coors = msg.data.split(",");
             var int_coors = [];
             
-            for (var i = 0; i < all_coors.length; i+=2){
-              int_coors.push({'x':parseInt(all_coors[0]), 'y':parseInt(all_coors[1]) });
+            for (var i = 0; i < all_coors.length; i++){
+              int_coors.push(parseInt(all_coors[i]));
             }
-            console.log(int_coors);
             draw_players(int_coors);
         };
     } else {

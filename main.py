@@ -116,7 +116,7 @@ def api():
         while True:
             message = ws.receive()
             print(message)
-            coors = [randint(0,300),randint(0,300),randint(0,300),randint(0,300)]
+            coors = [randint(80,1130),randint(50,730),randint(80,1130),randint(50,730),randint(80,1130),randint(50,730),randint(80,1130),randint(50,730)]
             ws.send(json.dumps(coors)[1:-1]) # getting rid of the [ and ] from the array
     return
 
