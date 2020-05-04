@@ -5,6 +5,7 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function(){
+//      sending data from front to back end, will do this when user interaction is enabled
 //            $('form').submit(function(event){
  //               ws.send($('#data').val())
 //                return false;
@@ -16,17 +17,21 @@
             if ("WebSocket" in window) {
                 ws = new WebSocket("ws://" + document.domain + ":5000/api");
                 ws.onmessage = function (msg) {
-                    $("#log").append("<p>"+msg.data+"</p>")
+                    $("#log").append("<p>"+msg.data+"</p>");
+                    var all_coors = msg.data.split(",");
+                    var x1 = parseInt(all_coors[0]);
+                    var y1 = parseInt(all_coors[1]);
+                    var x2 = parseInt(all_coors[2]);
+                    var y2 = parseInt(all_coors[3]);
+                    console.log(x1*2);
+                    console.log(y1*2);
+                    console.log(x2*2);
+                    console.log(y2*2);
                 };
             } else {
                 alert("WebSocket not supported");
             }
         });
-<!--        -->
-<!--        setInterval(function() {-->
-<!--            //call $.ajax here-->
-<!--        }, 5000); //5 seconds-->
-<!--        -->
     </script>
 </head>
 <body>

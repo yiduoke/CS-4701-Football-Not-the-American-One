@@ -135,15 +135,6 @@ function draw_ball(ball){
          .attr("stroke-width", 1)
 }
 
-function startTimer () {
-     timer.start();
-     setTimeout(stopTimer,5000);
- }
- 
- function stopTimer () {
-     timer.stop();
- }
-
 //receiving state information from Python through Ajax
 function receiveState(){
      for (let i = 0; i < 3; i++) {
@@ -162,6 +153,26 @@ function receiveState(){
 }
 
 receiveState();
+
+$(document).ready(function(){
+//      sending data from front to back end, will do this when user interaction is enabled
+//            $('form').submit(function(event){
+ //               ws.send($('#data').val())
+//                return false;
+//            });
+    setInterval(function(){
+      ws.send("meow!")
+      return false;
+    }, 1000);
+    if ("WebSocket" in window) {
+        ws = new WebSocket("ws://" + document.domain + ":5000/api");
+        ws.onmessage = function (msg) {
+            $("#log").append("<p>"+msg.data+"</p>")
+        };
+    } else {
+        alert("WebSocket not supported");
+    }
+});
 
 
 
