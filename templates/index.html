@@ -19,14 +19,12 @@
                 ws.onmessage = function (msg) {
                     $("#log").append("<p>"+msg.data+"</p>");
                     var all_coors = msg.data.split(",");
-                    var x1 = parseInt(all_coors[0]);
-                    var y1 = parseInt(all_coors[1]);
-                    var x2 = parseInt(all_coors[2]);
-                    var y2 = parseInt(all_coors[3]);
-                    console.log(x1*2);
-                    console.log(y1*2);
-                    console.log(x2*2);
-                    console.log(y2*2);
+                    var int_coors = [];
+                    
+                    for (var i = 0; i < all_coors.length; i+=2){
+                      int_coors.push({'x':parseInt(all_coors[0]), 'y':parseInt(all_coors[1]) });
+                    }
+                    console.log(int_coors);
                 };
             } else {
                 alert("WebSocket not supported");

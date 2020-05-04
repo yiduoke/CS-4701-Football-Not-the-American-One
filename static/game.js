@@ -135,25 +135,8 @@ function draw_ball(ball){
          .attr("stroke-width", 1)
 }
 
-//receiving state information from Python through Ajax
-function receiveState(){
-     for (let i = 0; i < 3; i++) {
-          $.ajax({
-               url: '/sendState' + i,
-               type: 'POST',
-               }).done(function(response){
-                       var obj = JSON.parse(response);
-                       draw_players(obj.state);
-                       draw_ball(obj.ball);
-                       console.log(obj);
-                       startTimer();
-                       //await sleep(3000);
-                       });   
-     }  
-}
 
-receiveState();
-
+// receiving player and ball coordinates every second (subject to change) from Flask through a websocket
 $(document).ready(function(){
 //      sending data from front to back end, will do this when user interaction is enabled
 //            $('form').submit(function(event){
@@ -167,7 +150,14 @@ $(document).ready(function(){
     if ("WebSocket" in window) {
         ws = new WebSocket("ws://" + document.domain + ":5000/api");
         ws.onmessage = function (msg) {
-            $("#log").append("<p>"+msg.data+"</p>")
+            var all_coors = msg.data.split(",");
+            var int_coors = [];
+            
+            for (var i = 0; i < all_coors.length; i+=2){
+              int_coors.push({'x':parseInt(all_coors[0]), 'y':parseInt(all_coors[1]) });
+            }
+            console.log(int_coors);
+            draw_players(int_coors);
         };
     } else {
         alert("WebSocket not supported");

@@ -1,7 +1,10 @@
+from geventwebsocket.handler import WebSocketHandler
+from gevent.pywsgi import WSGIServer
+from flask import Flask, request, render_template
 from flask import Flask, render_template, request
 from pprint import pprint
 import json
-import random
+from random import randint
 from action import Action
 from vector import Vector
 from team import Team
@@ -106,25 +109,20 @@ def root():
 
 act_lst = [Action.run, Action.shoot, Action.run]
 
-for i in range(3):
-    # @app.route('/sendState' + str(i), methods = ['POST','GET'])
-    sendState_str = \
-"""@app.route('/sendState' + str(i), methods = ['POST','GET'])
-def sendState""" + str(i) + """():
-    if current_state[0].balled:
-        player_act_balled(current_state[0], act_lst[i], ball)
-    else:
-        player_act_unballed(current_state[0], None, act_lst[i], ball)
-    all_coors = list(map(lambda x: parse_one_player_coors(x), current_state))
-    (ball_x, ball_y) = ball.get_coordinate()
-    response = json.dumps({"state": all_coors,
-                            "ball": {"x":ball_x, "y": ball_y},
-                            "time": i})
-    return response
-    """
-    print(sendState_str)
-    exec(sendState_str)
+@app.route('/api')
+def api():
+    if request.environ.get('wsgi.websocket'):
+        ws = request.environ['wsgi.websocket']
+        while True:
+            message = ws.receive()
+            print(message)
+            coors = [randint(0,300),randint(0,300),randint(0,300),randint(0,300)]
+            ws.send(json.dumps(coors)[1:-1]) # getting rid of the [ and ] from the array
+    return
 
 if __name__== "__main__":
+    http_server = WSGIServer(('',5000), app, handler_class=WebSocketHandler)
+    http_server.serve_forever()
+    
     app.debug = True
     app.run()
